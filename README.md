@@ -4,16 +4,15 @@
 
 ### Linux Log Collection · Regex Parsing · Analysis · Visualization
 
+[![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge\&logo=python\&logoColor=white)](https://www.python.org/)
+[![Linux](https://img.shields.io/badge/Linux-Logs-FCC624?style=for-the-badge\&logo=linux\&logoColor=black)](https://www.kernel.org/)
+[![Regex](https://img.shields.io/badge/Regex-Parsing-7C3AED?style=for-the-badge\&logo=regex\&logoColor=white)](https://docs.python.org/3/library/re.html)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557C?style=for-the-badge\&logo=python\&logoColor=white)](https://matplotlib.org/)
+[![Status](https://img.shields.io/badge/Status-In%20Development-00D4AA?style=for-the-badge)](https://github.com/Morez-Momeni/system-log-analyzer)
+
 <br>
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:0f1117,50:18212f,100:00d4aa&text=SYSTEM%20LOG%20ANALYZER&fontColor=ffffff&fontSize=38&fontAlignY=38&desc=Understand%20your%20Linux%20logs&descAlignY=60&descSize=16" width="100%"/>
-
-<br>
-
-[![Python](https://img.shields.io/badge/Python-3.x-00d4aa?style=for-the-badge\&logo=python\&logoColor=white)](https://www.python.org/)
-[![Linux](https://img.shields.io/badge/Linux-Logs-18212f?style=for-the-badge\&logo=linux\&logoColor=white)](https://www.kernel.org/)
-[![Regex](https://img.shields.io/badge/Regex-Parsing-7c5cff?style=for-the-badge)](https://docs.python.org/3/library/re.html)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-ff6b6b?style=for-the-badge\&logo=python\&logoColor=white)](https://matplotlib.org/)
 
 <br>
 
