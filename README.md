@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/image.png" width="100%" alt="System Log Analyzer">
+<img src="./assets/image.jpg" width="100%" alt="System Log Analyzer">
 
 <br>
 
@@ -14,13 +14,6 @@ A Python-based system for collecting, parsing, analyzing, and visualizing Linux 
 
 <br>
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-Environment-00D4AA?style=for-the-badge\&logo=linux\&logoColor=white)
-![Regex](https://img.shields.io/badge/Regex-Parsing-7C3AED?style=for-the-badge)
-![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557C?style=for-the-badge\&logo=python\&logoColor=white)
-![Status](https://img.shields.io/badge/Status-In%20Development-F59E0B?style=for-the-badge)
-
-<br>
 
 **Collect → Parse → Analyze → Visualize**
 
