@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/image.jpg" width="100%" alt="System Log Analyzer">
+<img src="./assets/syslog.jpg" width="100%" alt="System Log Analyzer">
 
 <br>
 
