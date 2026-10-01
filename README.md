@@ -1,18 +1,13 @@
 <div align="center">
-<br>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:0f1117,50:18212f,100:00d4aa&text=SYSTEM%20LOG%20ANALYZER&fontColor=ffffff&fontSize=38&fontAlignY=38&desc=Understand%20your%20Linux%20logs&descAlignY=60&descSize=16" width="100%"/>
-
-<br>
 
 <img src="./assets/syslog.jpg" width="100%" alt="System Log Analyzer">
 
 <br>
 
-# SYSTEM LOG ANALYZER
+<img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:0f1117,50:18212f,100:00d4aa&text=SYSTEM%20LOG%20ANALYZER&fontColor=ffffff&fontSize=38&fontAlignY=38&" width="100%"/>
 
-### Linux Logs · Regex Parsing · Analysis · Visualization
-
+<br>
 <br>
 
 A Python-based system for collecting, parsing, analyzing, and visualizing Linux system logs.
