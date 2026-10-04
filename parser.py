@@ -2,7 +2,7 @@ import re
 
 
 PATTERN = re.compile(
-    r"^(?P<time>[0-9\-\:\.\+T]+)\s"
+    r"^(?P<date>.+)T(?P<time>[0-9\:]+).+\s"
     r"(?P<Hostname>[a-zA-Z0-9_\-]+)\s"
     r"(?P<PsName>[a-zA-Z\-.]+)\[(?P<PsId>[0-9]+)\]",
     re.MULTILINE | re.UNICODE
@@ -17,6 +17,7 @@ def extract_processes():
     counter = 1
     for match in PATTERN.finditer(SAMPLE_LOG):
         results[counter] = {
+            "date": match.group("date"),
             "time": match.group("time"),
             "hostname": match.group("Hostname"),
             "process": match.group("PsName"),

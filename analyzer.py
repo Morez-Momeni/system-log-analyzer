@@ -1,3 +1,4 @@
+from datetime import datetime
 from parser import extract_processes
 
 PROCESSES = extract_processes()
@@ -119,3 +120,51 @@ def tail_ps(length = 10):
     process = ps_counter()
     process = sorted(process.items(),key=lambda item:item[1])
     print(process[:length])
+
+
+def ps_and_time():
+    
+    time_count = {}
+    counted_time = []
+    counter = 0 
+    for ps in PROCESSES.values():
+        if ps['time'] in counted_time:
+            continue
+        for ps2 in PROCESSES.values():
+            if ps['time'] == ps2['time']:
+                counted_time.append(ps['time'])
+                counter += 1
+        else:
+            time_count[ps["time"]] = counter
+            counter = 0
+    return time_count
+
+
+def define_range():
+    process = ps_and_time()
+    ranges = {}
+    for ps in process.keys():
+        start_time = int(ps[:2])
+        finish_time = start_time + 1
+        ranges[ps] = (start_time,finish_time)
+    return ranges        
+
+
+def summry_times():
+    process = define_range()
+    processes_per_hour = {}
+    used_time_key = []
+    counter = 0
+    for pst in process.values():
+        if pst in used_time_key:
+            continue
+        for pst2 in process.values():
+            if pst == pst2:
+                used_time_key.append(pst)
+                counter += 1
+        else:
+            processes_per_hour[pst] = counter
+            counter = 0 
+    return processes_per_hour
+
+
