@@ -68,3 +68,29 @@ def most_repeated_psid():
             most_repeated_processid.append(ps_key)
     return (most_repeated_processid) , highest_count
 
+def statistics():
+    unique_processes = uniqe_process()
+    process_counts = ps_counter()
+    most_processes, most_process_count = most_repeated_ps()
+
+    pid_counts = psid_counter()
+    most_pids, most_pid_count = most_repeated_psid()
+
+    print(f"Unique Processes: {len(unique_processes)}")
+    print(f"Total Processes: {len(PROCESSES)}")
+
+    print("\nProcess Counts:")
+    for process, count in process_counts.items():
+        print(f"  {process}: {count}")
+
+    print("\nMost Repeated Process:")
+    print(f"  Process: {most_processes}")
+    print(f"  Count: {most_process_count}")
+
+    print("\nPID Counts:")
+    for pid, count in pid_counts.items():
+        print(f"  PID {pid}: {count}")
+
+    print("\nMost Repeated PID:")
+    print(f"  PID: {most_pids}")
+    print(f"  Count: {most_pid_count}")

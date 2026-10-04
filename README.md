@@ -14,85 +14,106 @@
 
 ---
 
-## About
+# Linux System Log Analyzer
 
-**System Log Analyzer** is a Python project built to explore how Linux system logs can be processed programmatically.
+A lightweight Linux system log analysis tool written in Python.
 
-The project focuses on taking raw Linux log data and turning it into structured information that can be analyzed and visualized.
+This project collects system logs, parses process-related information from them, analyzes process frequency, and provides a visual representation of the most frequently occurring processes.
 
-Instead of treating a log file as a large block of text, the project breaks it down into useful fields such as:
-
-* Timestamp
-* Hostname
-* Process name
-* Process ID
-* Process frequency
-* PID frequency
-
-Regular expressions are used as the main parsing mechanism.
-
-The project is intentionally being developed incrementally, with each component built to solve a specific part of the log-analysis process.
+The project was built as a practical exercise in **Linux system logs, Regular Expressions, Python data processing, and basic security-oriented log analysis**.
 
 ---
 
-## Pipeline
+## Overview
+
+Linux systems generate a large amount of information through system logs. These logs can contain useful information about running services, processes, authentication events, system activity, and potential problems.
+
+This project provides a simple pipeline for working with those logs:
 
 ```text
-                    LINUX SYSTEM LOG
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │  Collector  │
-                    └──────┬──────┘
-                           │
-                           ▼
-                        log.txt
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │    Parser   │
-                    │    Regex    │
-                    └──────┬──────┘
-                           │
-                           ▼
-                  Structured Log Data
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │   Analyzer  │
-                    └──────┬──────┘
-                           │
-                           ▼
-                  Process / PID Data
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │ Visualizer  │
-                    └─────────────┘
-                           │
-                           ▼
-                       Charts
+System Logs
+     │
+     ▼
+Data Collector
+     │
+     ▼
+Parser / Regex
+     │
+     ▼
+Analyzer
+     │
+     ├── Process Statistics
+     │
+     └── PID Statistics
+     │
+     ▼
+Visualization
 ```
 
-The goal is simple:
-
-> **Turn raw Linux logs into information that can actually be understood.**
+The project currently focuses on extracting process information and finding the processes that appear most frequently in the collected logs.
 
 ---
 
-## Current Features
+## Features
 
-| Component       | Purpose                               | Status |
-| --------------- | ------------------------------------- | :----: |
-| `collector.py`  | Collect Linux system logs             |    ✅   |
-| `parser.py`     | Extract structured fields using Regex |    ✅   |
-| `analyzer.py`   | Analyze processes and PIDs            |    ✅   |
-| `visualizer.py` | Visualize analyzed data               |   🚧   |
-| `main.py`       | Main application entry point          |   🚧   |
+* Collect Linux system logs from `/var/log/syslog`
+* Automatically create a local `log.txt` file
+* Parse log entries using Regular Expressions
+* Extract:
 
-### Current parsing fields
+  * Timestamp
+  * Hostname
+  * Process name
+  * Process ID
+* Count process occurrences
+* Find unique processes
+* Find the most frequently occurring process
+* Count PID occurrences
+* Find the most frequently occurring PID
+* Visualize the top 10 most frequent processes
+* Command-line interface using `argparse`
 
-The parser currently extracts:
+---
+
+## Project Structure
+
+```text
+.
+├── datacollector.py
+├── parser.py
+├── analyzer.py
+├── visualizer.py
+├── main.py
+└── log.txt
+```
+
+### `datacollector.py`
+
+Responsible for collecting the system logs.
+
+The collector reads the system log from:
+
+```text
+/var/log/syslog
+```
+
+and creates:
+
+```text
+log.txt
+```
+
+in the project directory.
+
+The log file does not need to be manually added to the repository. It is generated when the collection command is executed.
+
+---
+
+### `parser.py`
+
+The parser processes the collected log and extracts structured information using Regular Expressions.
+
+The current parser extracts information such as:
 
 ```text
 Timestamp
@@ -101,153 +122,68 @@ Process Name
 Process ID
 ```
 
-For example, a log entry such as:
+For example, a log entry containing:
 
 ```text
-2026-09-27T16:52:22.397784+03:30 ubuntu apparmor.systemd[1260]: Warning: ...
+apparmor.systemd[1260]
 ```
 
-can be interpreted as:
+can be parsed into:
 
 ```text
-Time     → 2026-09-27T16:52:22.397784+03:30
-Hostname → ubuntu
-Process  → apparmor.systemd
-PID      → 1260
+Process: apparmor.systemd
+PID: 1260
 ```
 
----
-
-## Project Structure
-
-```text
-system-log-analyzer/
-│
-├── assets/
-│   └── system-log-analyzer-banner.png
-│
-├── collector.py
-├── parser.py
-├── analyzer.py
-├── visualizer.py
-├── main.py
-│
-├── log.txt
-├── requirements.txt
-├── .gitignore
-└── README.md
-```
-
-### `collector.py`
-
-Responsible for collecting Linux system logs.
-
-The collected data is written to:
-
-```text
-log.txt
-```
-
-> `log.txt` is generated automatically by the collector and does not need to be created manually.
-
----
-
-### `parser.py`
-
-Responsible for converting raw log lines into structured data.
-
-Regex is used to identify important components of each log entry.
-
-The extracted information currently includes:
-
-```text
-time
-hostname
-process
-pid
-```
+The extracted information is then passed to the analyzer.
 
 ---
 
 ### `analyzer.py`
 
-Responsible for analyzing the structured log data.
+The analyzer works with the parsed process information.
 
-Current analysis includes:
+It currently provides statistics such as:
 
-* Process occurrence counting
-* PID occurrence counting
-* Finding processes that appear only once
-* Finding the most repeated process
-* Finding the most repeated PID
+* Unique processes
+* Number of occurrences of each process
+* Most frequently occurring process
+* PID occurrence counts
+* Most frequently occurring PID
 
-The analysis layer is intentionally kept simple while the underlying concepts are being developed.
+For example, the analyzer can produce information conceptually similar to:
+
+```text
+Process              Occurrences
+--------------------------------
+systemd              1240
+sshd                  730
+NetworkManager        512
+...
+```
+
+These statistics are also used by the visualization component.
 
 ---
 
 ### `visualizer.py`
 
-Responsible for presenting analysis results visually.
+The visualization component uses **Matplotlib** to display the top 10 most frequently occurring processes.
 
-Current visualization work focuses on representing process distribution using `Matplotlib`.
+The processes are sorted by their number of occurrences and displayed as a horizontal bar chart.
 
-Future visualizations may include:
+Each bar also contains its exact occurrence count.
 
-```text
-Process frequency
-PID frequency
-Time-based activity
-Event distribution
-```
-
----
-
-### `main.py`
-
-`main.py` will eventually become the main entry point of the project.
-
-The goal is to connect the individual components:
+The resulting visualization looks conceptually like:
 
 ```text
-Collector
-   ↓
-Parser
-   ↓
-Analyzer
-   ↓
-Visualizer
+systemd             ███████████████████  1240
+sshd                ███████████           730
+NetworkManager      ███████               512
+...
 ```
 
-This part of the project is currently under development.
-
----
-
-## Why Regular Expressions?
-
-Linux logs are primarily text.
-
-That makes them a useful environment for learning how to extract structured information from semi-structured data.
-
-For example:
-
-```text
-2026-09-27T16:52:22.397784+03:30 ubuntu apparmor.systemd[1260]
-```
-
-contains several pieces of information inside a single string.
-
-A regular expression can describe the structure:
-
-```regex
-^(?P<time>[0-9\-:\.+T]+)\s
-(?P<Hostname>[a-zA-Z0-9_\-]+)\s
-(?P<PsName>[a-zA-Z\-.]+)
-\[(?P<PsId>[0-9]+)\]
-```
-
-The purpose is not simply to write a complicated Regex.
-
-The purpose is to understand how structured information can be extracted from real system data.
+This makes it easier to quickly identify which processes appear most frequently in the system logs.
 
 ---
 
@@ -256,178 +192,150 @@ The purpose is to understand how structured information can be extracted from re
 Clone the repository:
 
 ```bash
-git clone https://github.com/Morez-Momeni/system-log-analyzer.git
-cd system-log-analyzer
+git clone <repository-url>
+cd <repository-directory>
 ```
 
-Create a virtual environment:
+Install the required Python package:
 
 ```bash
-python3 -m venv .venv
+pip install matplotlib
 ```
 
-Activate it:
+The project also uses Python's standard library modules such as:
 
-```bash
-source .venv/bin/activate
+```text
+argparse
+re
+os
 ```
 
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
+which do not require separate installation.
 
 ---
 
 ## Usage
 
-The project is currently being developed component by component.
+The project is controlled through command-line arguments.
 
-The current workflow can be thought of as:
+### Collect Logs
 
-```text
-Linux Log
-   ↓
-collector.py
-   ↓
-log.txt
-   ↓
-parser.py
-   ↓
-Structured Data
-   ↓
-analyzer.py
-   ↓
-Analysis
-   ↓
-visualizer.py
-   ↓
-Visualization
+To collect the system logs:
+
+```bash
+python main.py --collog
 ```
 
-The final interface will be provided through `main.py`.
-
----
-
-## Data Source
-
-The initial version of the project works with Linux system logs such as:
-
-```text
-/var/log/syslog
-```
-
-The collector creates a local:
+This command reads the system log and creates:
 
 ```text
 log.txt
 ```
 
-file containing the collected log data.
+Output:
 
-This keeps the rest of the project independent from the original system log source.
+```text
+collecting logs from system...
+Done
+```
 
 ---
 
-## Future Development
+### Show Statistics
 
-The project is designed to grow beyond a single log source.
+To analyze the collected logs:
 
-Possible future sources include:
-
-```text
-/var/log/syslog
-/var/log/auth.log
-/var/log/kern.log
-journalctl
+```bash
+python main.py --sholog
 ```
 
-Possible future analysis:
-
-| Area           | Possible Analysis                  |
-| -------------- | ---------------------------------- |
-| Processes      | Frequency and activity             |
-| PIDs           | Process occurrence                 |
-| Authentication | Login / authentication events      |
-| Kernel         | Kernel-related events              |
-| Time           | Activity over time                 |
-| Errors         | Error frequency                    |
-| Warnings       | Warning frequency                  |
-| Security       | Suspicious authentication patterns |
-| Visualization  | Advanced log dashboards            |
-
-The project will evolve as new Linux logging and security concepts are learned.
+This runs the analyzer and displays the collected process statistics.
 
 ---
 
-## Project Philosophy
+### Show Visualization
 
-This project is not intended to be a full-featured SIEM.
+To generate the process frequency chart:
 
-It is a learning-oriented system built around a simple idea:
-
-> **Don't just read logs. Understand them.**
-
-The project combines several areas of practical learning:
-
-```text
-Python
-   +
-Linux
-   +
-Regular Expressions
-   +
-Data Analysis
-   +
-Visualization
-   +
-Security Concepts
+```bash
+python main.py --plot
 ```
 
-Each component exists for a reason and is built incrementally.
+This displays the **Top 10 Most Frequent Processes** using a horizontal bar chart.
+
+---
+
+### Collect and Analyze
+
+The options can also be combined.
+
+For example:
+
+```bash
+python main.py --collog --sholog --plot
+```
+
+This will:
+
+1. Collect the system logs
+2. Analyze the parsed process information
+3. Display the visualization
 
 ---
 
 ## Technologies
 
-* **Python**
-* **Linux**
-* **Regular Expressions**
-* **Matplotlib**
-* **Git / GitHub**
+| Technology          | Purpose                           |
+| ------------------- | --------------------------------- |
+| Python              | Main programming language         |
+| Regular Expressions | Log parsing                       |
+| Linux               | Source system and log environment |
+| `argparse`          | Command-line interface            |
+| Matplotlib          | Data visualization                |
 
 ---
 
-## Project Status
+## What I Learned
 
-🚧 **Actively under development**
+This project was built to practice working with real Linux system data rather than artificial input.
 
-The project is being developed incrementally.
+Through the project, I practiced:
 
-The current implementation focuses on:
-
-```text
-Collection
-Parsing
-Process Analysis
-PID Analysis
-Visualization
-```
-
-The architecture is intentionally open so that additional Linux log sources and security-oriented analysis can be added later.
+* Reading Linux system logs
+* Working with `/var/log/syslog`
+* Designing Regular Expressions for structured log extraction
+* Processing large amounts of log entries
+* Counting and comparing process occurrences
+* Working with Python dictionaries
+* Building command-line interfaces
+* Creating basic security-oriented data visualizations
+* Separating data collection, parsing, analysis, and visualization into different modules
 
 ---
 
-<div align="center">
+## Future Improvements
 
-### SYSTEM LOG ANALYZER
+Possible future improvements include:
 
-**Linux logs are data.
-Regex gives them structure.
-Analysis gives them meaning.**
+* Support for additional Linux log files
+* More log formats and parsing patterns
+* Filtering logs by date and time
+* Authentication event analysis
+* Failed login detection
+* Detection of unusual process activity
+* More visualization types
+* Exporting analysis results to JSON or CSV
+* Adding command-line filters
+* Improving the parser for different Linux distributions
 
-<br>
+---
+
+## Disclaimer
+
+This project is intended for **learning and educational purposes**.
+
+It is a simple log-analysis project and should not be considered a complete security monitoring or SIEM solution.
+
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=100&color=0:0B0F14,50:18212F,100:00D4AA&section=footer" width="100%">
 
