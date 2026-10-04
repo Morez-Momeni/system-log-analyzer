@@ -94,3 +94,28 @@ def statistics():
     print("\nMost Repeated PID:")
     print(f"  PID: {most_pids}")
     print(f"  Count: {most_pid_count}")
+
+
+
+def special_log(log_name: str):
+
+    log_val = ps_counter()
+
+    result = log_val.get(log_name)
+
+    if result is None:
+        print(f"Process '{log_name}' not found.")
+        return
+
+    print(f"Process: {log_name}")
+    print(f"Occurrences: {result}")
+
+def top_ps(length = 10):
+    process = ps_counter()
+    process = sorted(process.items(),key=lambda item:item[1],reverse=True)
+    print(process[:length])
+
+def tail_ps(length = 10):
+    process = ps_counter()
+    process = sorted(process.items(),key=lambda item:item[1])
+    print(process[:length])
