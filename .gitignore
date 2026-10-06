@@ -1,1 +1,5 @@
 auth-log.txt
+log.txt
+messages.txt
+.venv
+__pycache__
