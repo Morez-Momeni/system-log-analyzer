@@ -22,70 +22,70 @@
 
 ## `01` — About
 
-Linux systems continuously generate system logs containing information about processes, services, authentication events, sessions, and other system activity.
+Linux systems continuously generate logs containing information about processes, services, system activity, authentication events, and user sessions.
 
-This project reads entries from `/var/log/syslog`, extracts structured information using Regular Expressions, analyzes the extracted data, and provides command-line and graphical output.
+This project analyzes two different Linux log sources:
+
+| Log Source          | Purpose                                 |
+| ------------------- | --------------------------------------- |
+| `/var/log/syslog`   | System, process, PID, and time analysis |
+| `/var/log/auth.log` | Authentication and session analysis     |
+
+The project collects raw log entries, extracts structured information using Regular Expressions, analyzes the extracted data, and provides command-line and graphical output.
 
 ### Analysis Pipeline
 
 ```text
-                    /var/log/syslog
-                           │
-                           ▼
-                  ┌─────────────────┐
-                  │  Data Collector │
-                  └────────┬────────┘
-                           │
-                           ▼
-                  ┌─────────────────┐
-                  │  Regex Parser   │
-                  └────────┬────────┘
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-              ▼                         ▼
-      Process Log Data          Authentication Data
-              │                         │
-              ▼                         ▼
-         ┌─────────┐              messages.txt
-         │ Analyzer│                    │
-         └────┬────┘                    │
-              │                         │
-       ┌──────┼────────┐                │
-       ▼      ▼        ▼                ▼
-    Process  PID      Time       Authentication
-       │      │        │              │
-       └──────┼────────┘              │
-              │                       │
-              └───────────┬───────────┘
-                          ▼
-                   ┌──────────────┐
-                   │ Visualizer   │
-                   └──────────────┘
+                         Linux Logs
+                             │
+                  ┌──────────┴──────────┐
+                  │                     │
+                  ▼                     ▼
+           /var/log/syslog       /var/log/auth.log
+                  │                     │
+                  ▼                     ▼
+          Data Collection        Data Collection
+                  │                     │
+                  ▼                     ▼
+             Regex Parser          Auth Parser
+                  │                     │
+          ┌───────┼───────┐            │
+          ▼       ▼       ▼            ▼
+       Process   PID     Time    Authentication
+          │       │       │            │
+          └───────┼───────┘            │
+                  │                    │
+                  └─────────┬──────────┘
+                            ▼
+                         Analyzer
+                            │
+                            ▼
+                       Visualizer
 ```
 
 ---
 
 ## `02` — Features
 
-| Category       | Feature                          | Description                                    |
-| -------------- | -------------------------------- | ---------------------------------------------- |
-| Collection     | **Log Collection**               | Collect logs from `/var/log/syslog`            |
-| Parsing        | **Regex Parsing**                | Extract structured fields from raw log entries |
-| Process        | **Process Analysis**             | Count and compare process activity             |
-| Process        | **PID Analysis**                 | Analyze process IDs and their frequency        |
-| Process        | **Process Filtering**            | Investigate a specific process                 |
-| Process        | **Process Ranking**              | Find the most and least frequent processes     |
-| Time           | **Time Analysis**                | Analyze activity using one-hour ranges         |
-| Authentication | **Failed Authentication**        | Detect failed password checks                  |
-| Authentication | **Session Analysis**             | Extract session open/close events              |
-| Authentication | **User Analysis**                | Count session events per user                  |
-| Visualization  | **Process Visualization**        | Visualize process frequency                    |
-| Visualization  | **Time Visualization**           | Visualize activity by hour                     |
-| Visualization  | **Session Visualization**        | Visualize opened and closed sessions           |
-| Visualization  | **User Visualization**           | Visualize session activity per user            |
-| Visualization  | **Authentication Visualization** | Visualize failed authentication attempts       |
-| CLI            | **Command-Line Interface**       | Control the analyzer using `argparse`          |
+| Category       | Feature                           | Description                                          |
+| -------------- | --------------------------------- | ---------------------------------------------------- |
+| Collection     | **System Log Collection**         | Collect logs from `/var/log/syslog`                  |
+| Collection     | **Authentication Log Collection** | Collect authentication logs from `/var/log/auth.log` |
+| Parsing        | **Regex Parsing**                 | Extract structured information from raw log entries  |
+| Process        | **Process Analysis**              | Count and compare process activity                   |
+| Process        | **PID Analysis**                  | Analyze process IDs and their frequency              |
+| Process        | **Process Filtering**             | Investigate a specific process                       |
+| Process        | **Process Ranking**               | Find the most and least frequent processes           |
+| Time           | **Time Analysis**                 | Analyze system activity using one-hour ranges        |
+| Authentication | **Failed Authentication**         | Detect failed password checks from `auth.log`        |
+| Authentication | **Session Analysis**              | Extract opened and closed sessions                   |
+| Authentication | **User Analysis**                 | Count session activity per user                      |
+| Visualization  | **Process Visualization**         | Visualize process frequency                          |
+| Visualization  | **Time Visualization**            | Visualize activity by hour                           |
+| Visualization  | **Session Visualization**         | Visualize opened and closed sessions                 |
+| Visualization  | **User Visualization**            | Visualize session activity per user                  |
+| Visualization  | **Authentication Visualization**  | Visualize failed authentication attempts             |
+| CLI            | **Command-Line Interface**        | Control the analyzer using `argparse`                |
 
 ---
 
@@ -106,16 +106,16 @@ This project reads entries from `/var/log/syslog`, extracts structured informati
 
 | File                | Responsibility                                                     |
 | ------------------- | ------------------------------------------------------------------ |
-| `datacollector.py`  | Collect system logs from `/var/log/syslog`                         |
-| `parser.py`         | Parse system log entries using Regular Expressions                 |
+| `datacollector.py`  | Collect system and authentication logs                             |
+| `parser.py`         | Parse log entries using Regular Expressions                        |
 | `analyzer.py`       | Analyze processes, PIDs, time ranges, authentication, and sessions |
 | `visualizer.py`     | Generate Matplotlib visualizations                                 |
 | `main.py`           | Command-line interface and feature selection                       |
-| `log.txt`           | Automatically generated collected system log                       |
+| `log.txt`           | Collected system log                                               |
 | `messages.txt`      | Extracted authentication-related messages                          |
 | `assets/syslog.jpg` | README project banner                                              |
 
-> **Note:** `log.txt` and `messages.txt` are generated during execution and do not need to exist before running the program.
+> **Note:** `log.txt` and `messages.txt` are generated during execution and do not need to exist beforehand.
 
 ---
 
@@ -123,19 +123,46 @@ This project reads entries from `/var/log/syslog`, extracts structured informati
 
 ### `datacollector.py`
 
-The collector reads the Linux system log:
+The collector works with two Linux log sources.
+
+### System Logs
 
 ```text
 /var/log/syslog
 ```
 
-and writes the collected data to:
+These logs are used for:
+
+* Process analysis
+* PID analysis
+* Time analysis
+
+The collected data is stored in:
 
 ```text
 log.txt
 ```
 
-### Workflow
+### Authentication Logs
+
+```text
+/var/log/auth.log
+```
+
+These logs are used for:
+
+* Authentication analysis
+* Failed password checks
+* Session analysis
+* User session activity
+
+Authentication-related messages are extracted and stored in:
+
+```text
+messages.txt
+```
+
+### System Log Workflow
 
 ```text
 Linux System
@@ -150,13 +177,28 @@ Data Collector
   log.txt
 ```
 
-### Command
+### Authentication Log Workflow
+
+```text
+Linux Authentication Events
+          │
+          ▼
+/var/log/auth.log
+          │
+          ▼
+   Auth Log Collector
+          │
+          ▼
+     messages.txt
+```
+
+### Collection
 
 ```bash
 python main.py --collog
 ```
 
-### Output
+Example output:
 
 ```text
 collecting logs from system...
@@ -164,21 +206,17 @@ collecting logs from system...
 Done
 ```
 
-| Input             | Output    |
-| ----------------- | --------- |
-| `/var/log/syslog` | `log.txt` |
-
 ---
 
 ## `05` — Parsing
 
 ### `parser.py`
 
-Raw syslog entries contain multiple fields in a single line.
+Raw Linux log entries contain multiple fields in a single line.
 
 The parser uses **Regular Expressions** to extract structured information.
 
-### Example Log Entry
+### System Log Example
 
 ```text
 2026-09-27T16:52:22.397784+03:30 ubuntu apparmor.systemd[1260]
@@ -194,15 +232,35 @@ The parser uses **Regular Expressions** to extract structured information.
 | Process  | `apparmor.systemd` |
 | PID      | `1260`             |
 
-The parser also extracts authentication-related log entries and their messages for further analysis.
+These fields are used by the system-log analysis functions.
+
+### Authentication Log Example
+
+Authentication entries can contain events such as:
+
+```text
+password check failed for user (morez)
+```
+
+or:
+
+```text
+pam_unix(cron:session): session opened for user root(uid=0)
+```
+
+The authentication parser extracts relevant message information for further analysis.
 
 ---
 
 ## `06` — Process Analysis
 
-### Process Statistics
+Process analysis is performed on entries collected from:
 
-The analyzer calculates process-related statistics from the parsed system logs.
+```text
+/var/log/syslog
+```
+
+### Process Statistics
 
 | Analysis              | Description                            |
 | --------------------- | -------------------------------------- |
@@ -286,6 +344,12 @@ python main.py --tail 10
 
 ## `07` — Time Analysis
 
+Time analysis is performed on entries collected from:
+
+```text
+/var/log/syslog
+```
+
 The parser preserves the timestamp down to the second.
 
 ```text
@@ -294,7 +358,7 @@ The parser preserves the timestamp down to the second.
 16:52:25
 ```
 
-The analyzer first counts activity for exact timestamps and then groups the available timestamps into one-hour ranges.
+The analyzer counts events for exact timestamps and groups them into one-hour ranges.
 
 ### Example
 
@@ -317,23 +381,23 @@ Hours without log entries are not included in the result.
 python main.py --timeplot
 ```
 
-The resulting bar chart displays the number of log entries recorded during each hour containing activity.
+The resulting bar chart displays the number of system-log entries recorded during each hour containing activity.
 
 ---
 
 ## `08` — Authentication & Session Analysis
 
-Authentication analysis operates on authentication-related messages extracted from the system logs.
-
-The extracted messages are stored in:
+Authentication and session analysis is performed using:
 
 ```text
-messages.txt
+/var/log/auth.log
 ```
+
+This analysis is separate from the system-log analysis performed on `/var/log/syslog`.
 
 ### Authentication Events
 
-The analyzer currently identifies events such as:
+The analyzer currently works with authentication-related events such as:
 
 | Event                 | Example                          |
 | --------------------- | -------------------------------- |
@@ -354,7 +418,7 @@ User: morez
 Event: password check failed
 ```
 
-The result can contain multiple failed attempts for the same user.
+Multiple failed attempts from the same user can be counted and visualized.
 
 ### Visualization
 
@@ -368,11 +432,13 @@ This generates a bar chart showing failed authentication attempts per user.
 
 ### Session Status
 
-`session_status()` extracts:
+`session_status()` extracts three fields:
 
-* Process
-* User
-* Session status
+| Field   | Description                                |
+| ------- | ------------------------------------------ |
+| Process | Authentication/session process             |
+| User    | User associated with the event             |
+| Status  | Session state such as `opened` or `closed` |
 
 Example:
 
@@ -427,17 +493,17 @@ This generates a bar chart comparing opened and closed sessions.
 
 ## `09` — Visualization
 
-The project uses **Matplotlib** for graphical analysis.
+The project uses **Matplotlib** to visualize the analyzed data.
 
 ### Available Visualizations
 
-| Command         | Visualization         | Data                     |
-| --------------- | --------------------- | ------------------------ |
-| `--plot`        | Process Frequency     | Most frequent processes  |
-| `--timeplot`    | Activity by Hour      | Log activity per hour    |
-| `--sessionplot` | Session Status        | Opened / closed sessions |
-| `--userplot`    | Sessions Per User     | Session events per user  |
-| `--authplot`    | Failed Authentication | Failed attempts per user |
+| Command         | Visualization         | Source              |
+| --------------- | --------------------- | ------------------- |
+| `--plot`        | Process Frequency     | `/var/log/syslog`   |
+| `--timeplot`    | Activity by Hour      | `/var/log/syslog`   |
+| `--sessionplot` | Session Status        | `/var/log/auth.log` |
+| `--userplot`    | Sessions Per User     | `/var/log/auth.log` |
+| `--authplot`    | Failed Authentication | `/var/log/auth.log` |
 
 ### Process Frequency
 
@@ -453,7 +519,7 @@ Displays a horizontal bar chart of the most frequent processes.
 python main.py --timeplot
 ```
 
-Displays the number of log entries recorded in each active hour.
+Displays the number of system-log entries recorded in each active hour.
 
 ### Session Status
 
@@ -461,7 +527,7 @@ Displays the number of log entries recorded in each active hour.
 python main.py --sessionplot
 ```
 
-Displays the distribution of session states.
+Displays the distribution of opened and closed sessions from authentication logs.
 
 ### Sessions Per User
 
@@ -485,18 +551,18 @@ Displays failed authentication attempts grouped by user.
 
 The project is controlled through command-line arguments using Python's `argparse`.
 
-| Command          | Argument Type | Purpose                         |
-| ---------------- | ------------- | ------------------------------- |
-| `--collog`       | Flag          | Collect system logs             |
-| `--sholog`       | Flag          | Show process statistics         |
-| `--slog PROCESS` | String        | Analyze a specific process      |
-| `--top N`        | Integer       | Show N most frequent processes  |
-| `--tail N`       | Integer       | Show N least frequent processes |
-| `--plot`         | Flag          | Visualize process frequency     |
-| `--timeplot`     | Flag          | Visualize activity by hour      |
-| `--sessionplot`  | Flag          | Visualize session status        |
-| `--userplot`     | Flag          | Visualize sessions per user     |
-| `--authplot`     | Flag          | Visualize failed authentication |
+| Command          | Argument Type | Purpose                           |
+| ---------------- | ------------- | --------------------------------- |
+| `--collog`       | Flag          | Collect log data                  |
+| `--sholog`       | Flag          | Show process statistics           |
+| `--slog PROCESS` | String        | Analyze a specific process        |
+| `--top N`        | Integer       | Show N most frequent processes    |
+| `--tail N`       | Integer       | Show N least frequent processes   |
+| `--plot`         | Flag          | Visualize process frequency       |
+| `--timeplot`     | Flag          | Visualize system activity by hour |
+| `--sessionplot`  | Flag          | Visualize session status          |
+| `--userplot`     | Flag          | Visualize sessions per user       |
+| `--authplot`     | Flag          | Visualize failed authentication   |
 
 ### Example
 
@@ -504,7 +570,7 @@ The project is controlled through command-line arguments using Python's `argpars
 python main.py --collog --top 10 --timeplot
 ```
 
-Multiple flags can be supplied in the same execution.
+Multiple flags can be supplied during the same execution.
 
 ---
 
@@ -540,56 +606,57 @@ No separate installation is required for standard-library modules.
 
 ## `12` — Technologies
 
-| Technology              | Role                       |
-| ----------------------- | -------------------------- |
-| **Python**              | Core programming language  |
-| **Linux**               | System and log environment |
-| **Regular Expressions** | Log parsing                |
-| **argparse**            | CLI interface              |
-| **Matplotlib**          | Data visualization         |
+| Technology              | Role                                      |
+| ----------------------- | ----------------------------------------- |
+| **Python**              | Core programming language                 |
+| **Linux**               | System and authentication log environment |
+| **Regular Expressions** | Log parsing                               |
+| **argparse**            | CLI interface                             |
+| **Matplotlib**          | Data visualization                        |
 
 ---
 
 ## `13` — Analysis Overview
 
-The current analyzer provides several different views of the collected system logs.
+The project currently provides two main analysis paths based on different Linux log sources.
 
-| Analysis Area  | Available Information                                   |
-| -------------- | ------------------------------------------------------- |
-| Process        | Unique processes, frequency, ranking                    |
-| PID            | PID frequency and ranking                               |
-| Time           | Exact timestamps and hourly activity                    |
-| Authentication | Failed password checks                                  |
-| Sessions       | Opened / closed sessions                                |
-| Users          | Session events per user                                 |
-| Visualization  | Process, time, session, user, and authentication charts |
+| Log Source          | Analysis                | Output                   |
+| ------------------- | ----------------------- | ------------------------ |
+| `/var/log/syslog`   | Process Analysis        | Process frequency        |
+| `/var/log/syslog`   | PID Analysis            | PID frequency            |
+| `/var/log/syslog`   | Time Analysis           | Activity by hour         |
+| `/var/log/auth.log` | Authentication Analysis | Failed authentication    |
+| `/var/log/auth.log` | Session Analysis        | Opened / closed sessions |
+| `/var/log/auth.log` | User Analysis           | Session events per user  |
 
-### Current CLI Capabilities
+### Current Analysis Pipeline
 
 ```text
-Collection
-    └── /var/log/syslog → log.txt
+/var/log/syslog
+      │
+      ├── Process
+      ├── PID
+      └── Time
+             │
+             ▼
+          Analyzer
+             │
+             ▼
+        Visualization
 
-Parsing
-    ├── Date
-    ├── Time
-    ├── Hostname
-    ├── Process
-    ├── PID
-    └── Message
 
-Analysis
-    ├── Process Analysis
-    ├── PID Analysis
-    ├── Time Analysis
-    └── Authentication / Session Analysis
-
-Visualization
-    ├── Process Frequency
-    ├── Activity by Hour
-    ├── Session Status
-    ├── Sessions Per User
-    └── Failed Authentication
+/var/log/auth.log
+      │
+      ├── Authentication
+      ├── Failed Passwords
+      ├── Sessions
+      └── Users
+             │
+             ▼
+          Analyzer
+             │
+             ▼
+        Visualization
 ```
 
 ---
@@ -598,11 +665,12 @@ Visualization
 
 | Area           | Possible Improvement                    |
 | -------------- | --------------------------------------- |
-| Log Sources    | Support additional Linux log files      |
+| Log Sources    | Support additional Linux system logs    |
 | Log Sources    | Support different log formats           |
 | Authentication | Analyze more authentication event types |
-| Authentication | Add `sudo` activity analysis            |
+| Authentication | Analyze `sudo` activity                 |
 | Authentication | Extract IP addresses where available    |
+| Authentication | Improve failed-login analysis           |
 | Security       | Detect suspicious process activity      |
 | Security       | Basic anomaly detection                 |
 | Filtering      | Filter logs by date and time            |
