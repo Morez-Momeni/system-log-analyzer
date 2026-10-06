@@ -1,8 +1,9 @@
+import re
 from datetime import datetime
-from parser import extract_processes
+from parser import extract_processes, extract_auth_logs
 
 PROCESSES = extract_processes()
-
+AUTH_LOGS_PROCESS = extract_auth_logs()
 
 def uniqe_process():
     uniqe_ps = []
@@ -167,4 +168,102 @@ def summry_times():
             counter = 0 
     return processes_per_hour
 
+def wrrite_message():
+    for m in AUTH_LOGS_PROCESS.values():
+        with open("messages.txt" , "w") as file:
+            file.write(f"{m['message']}\n")
 
+
+
+    
+def login_failed():
+        result = [] 
+        with open("messages.txt" , 'r') as file:
+            SAMPLE = file.read()
+     
+        regex = re.compile(r"^ +(?P<event>password check failed).+\((?P<user>\w+)", re.MULTILINE | re.UNICODE)
+        for match in regex.finditer(SAMPLE):
+            result.append((match.group('user'),match.group('event')))
+        return result
+
+def session_status():
+        result = [] 
+        with open("messages.txt" , 'r') as file:
+            SAMPLE = file.read()
+     
+        regex = re.compile(r"^ +(?P<process>[\w\(\)\:]+)\:\ssession\s(?P<stat>\w+).+user\s(?P<user>\w+)",
+                        re.MULTILINE | re.UNICODE)
+        for match in regex.finditer(SAMPLE):
+            result.append((match.group('process'),match.group('user'),match.group('stat')))
+        return result
+
+def session_counter():
+        data = session_status()
+        result = {}
+        counter = 0
+        counted = []
+        for u in data:
+            if u[1] in counted:
+                continue
+            for us in data:
+                if u[1] == us[1]:
+                    counted.append(us[1])
+                    counter += 1    
+            else:
+                result[u[1]] = counter 
+                counter = 0 
+        return result
+
+def status_counter():
+        data = session_status()
+        result = {}
+        counter = 0
+        counted = []
+        for u in data:
+            if u[2] in counted:
+                continue
+            for us in data:
+                if u[2] == us[2]:
+                    counted.append(us[2])
+                    counter += 1    
+            else:
+                result[u[2]] = counter 
+                counter = 0 
+        return result
+    
+def show_report():
+
+        failed = login_failed()
+        sessions = session_status()
+        users = session_counter()
+        statuses = status_counter()
+
+        print("\n" + "=" * 55)
+        print("           AUTHENTICATION ANALYSIS")
+        print("=" * 55)
+
+        print("\n[ Failed Passwords ]")
+
+        if failed:
+            for user, event in failed:
+                print(f"  User: {user:<15} Event: {event}")
+        else:
+            print("  No failed password attempts found.")
+
+        print("\n[ Session Events ]")
+        print(f"  {'Process':<35} {'User':<15} {'Status'}")
+        print("  " + "-" * 65)
+
+        for process, user, status in sessions:
+            print(f"  {process:<35} {user:<15} {status}")
+
+        print("\n[ Sessions Per User ]")
+        for user, count in users.items():
+            print(f"  {user:<20} {count}")
+
+        print("\n[ Session Status Summary ]")
+        for status, count in statuses.items():
+            print(f"  {status:<20} {count}")
+
+        print("\n" + "=" * 55)
+ 

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from analyzer import ps_counter, summry_times
+from analyzer import ps_counter, summry_times , session_counter, status_counter, login_failed
 
 
 def plot():
@@ -69,4 +69,71 @@ def plot_time():
         )
 
     plt.tight_layout()
+    plt.show()
+
+
+
+
+
+
+
+def plot_session_status():
+
+    data = status_counter()
+
+    statuses = list(data.keys())
+    counts = list(data.values())
+
+    plt.bar(statuses, counts)
+
+    plt.title("Session Status")
+    plt.xlabel("Status")
+    plt.ylabel("Count")
+
+    plt.show()
+
+
+def plot_sessions_per_user():
+
+    data = session_counter()
+
+    users = list(data.keys())
+    counts = list(data.values())
+
+    plt.bar(users, counts)
+
+    plt.title("Sessions Per User")
+    plt.xlabel("User")
+    plt.ylabel("Session Count")
+
+    plt.show()
+
+
+def plot_failed_auth():
+
+    data = login_failed()
+
+    users = []
+
+    for user, event in data:
+        if user not in users:
+            users.append(user)
+
+    counts = []
+
+    for user in users:
+        counter = 0
+
+        for failed_user, event in data:
+            if user == failed_user:
+                counter += 1
+
+        counts.append(counter)
+
+    plt.bar(users, counts)
+
+    plt.title("Failed Authentication")
+    plt.xlabel("User")
+    plt.ylabel("Failed Attempts")
+
     plt.show()
