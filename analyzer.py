@@ -3,7 +3,7 @@ from datetime import datetime
 from parser import extract_processes, extract_auth_logs
 
 PROCESSES = extract_processes()
-AUTH_LOGS_PROCESS = extract_auth_logs()
+
 
 def uniqe_process():
     uniqe_ps = []
@@ -167,11 +167,6 @@ def summry_times():
             processes_per_hour[pst] = counter
             counter = 0 
     return processes_per_hour
-
-def wrrite_message():
-    for m in AUTH_LOGS_PROCESS.values():
-        with open("messages.txt" , "w") as file:
-            file.write(f"{m['message']}\n")
 
 
 
